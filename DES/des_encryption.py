@@ -6,7 +6,7 @@ from modules import cipher as enc
 def main():
     #Check the number of Arguments to be 3 
     if len(sys.argv) != 3:
-        print("Usage : python3 des_encryption <hexa_plain_text> <hexa_key>")
+        print("Usage : python3 des_encryption.py <hexa_plain_text> <hexa_key>")
         exit()
     #Check the size of the Plaintext and Key
     if not len(sys.argv[1]) == 16:
@@ -30,7 +30,7 @@ def main():
     # key_hex = "AABB09182736CCDD" to be provided
     key_hex = sys.argv[2].upper()
 
-    # Check if KEY string is coded in HEX 
+    # Check if KEY string is encoded in HEX 
     if not h.is_hex(key_hex):
         print("Key : \'{}\', should be encoded in HEX, double check".format(key_hex))
         exit()

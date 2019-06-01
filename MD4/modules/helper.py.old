@@ -1,0 +1,118 @@
+# Left Rotate bits with number of "rot_bits"
+# "hex_value" = hexadecimal value to be rotated
+# "rot_bits" = number of bits to rotate
+# "max_bits" = size of hex_value (in bits)
+def left_rot_bits(hex_value, rot_bits, max_bits):
+    l_part = (hex_value << rot_bits % max_bits) & (2**max_bits-1)
+    r_part = ((hex_value & (2**max_bits-1)) >> (max_bits-(rot_bits%max_bits)))
+    hex_value = l_part | r_part
+    return hex_value
+
+# First Function : ff
+# FF(X,Y,Z) = X.Y xor X.Z xor Z --> Book 
+# FF(X,Y,Z) = ( (X & Y) or ((~(X) & Z) ) --> RFC_1230
+def ff(vector_x, vector_y, vector_z):
+    return (vector_x & vector_y) ^ (vector_x & vector_z) ^ (vector_z) 
+
+# Majority Function : gg 
+# GG(X,Y,Z) = X.Y xor X.Z xor Y.Z --> Book
+# GG(X,Y,Z) = ( (X & Y) or (X & Z) or (Y & Z) ) --> RFC_1230 
+def gg(vector_x, vector_y, vector_z):
+    return (vector_x & vector_y) ^ (vector_x & vector_z) ^ (vector_y & vector_z) 
+
+# Final Function : hh
+# HH(X,Y,Z) = X xor Y xor Z --> Book
+# HH(X,Y,Z) = ( X xor Y xor Z ) --> RFC_1230
+def hh(vector_x, vector_y, vector_z):
+    return vector_x ^ vector_y ^ vector_z 
+
+
+#Convert Input Hexadecimal stream(String) to Bits stream(String)
+#1 hex_stream --> 4 bit_stream
+def hex_to_bits(hex_stream):
+    l_bits = []
+    for i in range(len(hex_stream)):
+        bits = hex_to_bits_table(hex_stream[i])
+        l_bits.append(bits)
+    bit_stream = ''.join(l_bits)
+    return bit_stream
+def hex_to_bits_table(index):
+    table = {
+        "0": "0000",
+        "1": "0001",
+        "2": "0010",
+        "3": "0011",
+        "4": "0100",
+        "5": "0101",
+        "6": "0110",
+        "7": "0111",
+        "8": "1000",
+        "9": "1001",
+        "A": "1010",
+        "B": "1011",
+        "C": "1100",
+        "D": "1101",
+        "E": "1110",
+        "F": "1111"}
+    return table[index]
+
+
+#Convert each 4 Bits stream(String) to Hexadecimal stream(bits) 
+#4 bit_stream --> 1 hex_stream
+def bits_to_hex(bit_stream): 
+    if len(bit_stream) % 4 != 0:
+        return 0
+    l_hexa = []
+    for i in range(0, len(bit_stream), 4):
+        hexa = bits_to_hex_table(bit_stream[i:i+4])
+        l_hexa.append(hexa)
+    hex_stream = ''.join(l_hexa)
+    return hex_stream
+def bits_to_hex_table(index):
+    table = {
+        "0000": "0",
+        "0001": "1",
+        "0010": "2",
+        "0011": "3",
+        "0100": "4",
+        "0101": "5",
+        "0110": "6",
+        "0111": "7",
+        "1000": "8",
+        "1001": "9",
+        "1010": "A",
+        "1011": "B",
+        "1100": "C",
+        "1101": "D",
+        "1110": "E",
+        "1111": "F"}
+    return table[index]
+
+#Convert Integer to Hexa
+#Integer --> Bits (32bits) --> Hexa (32bits)
+def int_to_hexa32(int_stream):
+    bit_stream = '{0:032b}'.format(int_stream) 
+    return bits_to_hex(bit_stream)
+
+# Convert int/1 character ASCII in Hexa of 8bits
+def int_to_hexa8(int_stream):
+    bit_stream = '{0:08b}'.format(int_stream) 
+    return bits_to_hex(bit_stream)
+ 
+def msg_padding(message):
+    bits = {}
+    hexa = {}
+    for i in range(len(message)):
+        bits[i] = '{0:08b}'.format(ord(message[i]))
+    bits_msg = ''.join(value for keys, value in bits.items())
+    
+    len_msg = len(bits_msg) % 512
+    len_msg_bits = '{0:064b}'.format(len_msg)
+
+    final_msg = ""
+    if len_msg > 448:
+        final_msg = bits_msg[:448] + len_msg_bits + bits_msg[448:len_msg] + "1" + "0"*(448-((len_msg+1)-448)) + len_msg_bits
+    else:
+        final_msg = bits_msg[:len_msg] + "1" + "0"*(448-(len_msg+1)) + len_msg_bits
+
+    return bits_to_hex(final_msg)

@@ -5,7 +5,7 @@ from binascii import hexlify
 def make_words(byte_array):
     res = []
     for i in range(0, len(byte_array), 4):
-        index = i/4
+        index = i//4
         res.append(byte_array[i+3])
         res[index] = (res[index] << 8) | byte_array[i+2]
         res[index] = (res[index] << 8) | byte_array[i+1]
@@ -19,7 +19,6 @@ def md4(message, mode_test=False):
 
     # add a '1' bit via a byte
     message += [0x80]
-    
     mod_length = len(message) % 64
 
     # padding to 448 % 512 bits (56 % 64 byte)
@@ -29,17 +28,15 @@ def md4(message, mode_test=False):
         message += [0x00] * (120 - mod_length)
 
     # add the length as a 64 bit big endian, use lower order bits if length overflows 2^64
-    length = [ord(c) for c in pack('>Q', (original_length * 8) & 0xFFFFFFFFFFFFFFFF)]
+    length = [c for c in pack('>Q', (original_length * 8) & 0xFFFFFFFFFFFFFFFF)]
 
     # add the two words least significant first
     message.extend(length[::-1])
 
     if mode_test:
-        #print("\nafter padding {}".format(hex(b) for b in message))
         print("\nMessage after padding ({1} bits) : \n  \"{0}\"".format(''.join(format(b, '02x') for b in message), len(message)*8))
 
-        #print(message)
-    # Initialization Vector(IV) {Registers} 
+    # Initialization Vector(IV) {registers} 
     A = 0x67452301
     B = 0xefcdab89
     C = 0x98badcfe

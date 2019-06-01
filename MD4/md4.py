@@ -1,7 +1,15 @@
 import sys
+import argparse
 from modules import helper as h
 
 def main():
+
+    '''
+    parser = argparse.ArgumentParser(description="Voting Client")
+    parser.add_argument('-m', '--message', action='store', dest='message', help='The message to hash', required=True)
+    args = parser.parse_args()
+    '''
+
     if len(sys.argv) != 2:
         print("Usage: \npython3 md4.py \"<your_message>\"")
         print("# Note: \"<your_message>\" should be within double quotes\n")

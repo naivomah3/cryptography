@@ -104,18 +104,14 @@ def mult_inverse_mod(a, m):
 def generate_params():
     '''
     Params generator: 
-    p and q: the 2 large primes 
-    n: product of p and q
-    e: randomly taken such that 1 < e < φ(n) and φ(n) = (p-1)(q-1)
-    d: 
+    `p` and `q`: the 2 large primes 
+    n: product of `p` and `q`
+    e: number randomly taken such that 1 < e < φ(n) and φ(n) = (p-1)(q-1) serves as Public-Key
+    d: multiplicative inverse of `e` mod `n`
     '''
     key_size = 6 
-    p = 0
-    q = 0
-    n = 0 
-    e = 0
-    d = 0
-    is_e = True
+    p, q, n, e, d = 0, 0, 0, 0, 0
+    
     p = generate_prime(key_size)
     q = generate_prime(key_size)
     n = p * q
@@ -123,19 +119,11 @@ def generate_params():
         e = random.randrange(2**(key_size-1), 2**(key_size))
         if gcd(e, (p-1)*(q-1)) == 1:
             break
-    #print("e = {}".format(e))
-
     d = mult_inverse_mod(e, (p-1)*(q-1))
-    #print("d = {}".format(d))
-    return (e, d, n)
+    return [e, d, n]
 
 def text_to_ascii(message):
-    message_bytes = message.encode('ascii')
-    #print([i for i in str(message_bytes)])
-    block_ints = []
-    for i in range(len(message_bytes)):
-        block_ints.append(message_bytes[i])
-    return block_ints
+    return message.encode('ascii')
 
 def ascii_to_text(block_messages):
     blocks = []
@@ -143,4 +131,3 @@ def ascii_to_text(block_messages):
     for block in block_messages:
         blocks.append(str(chr(int(block))))
     return blocks
-    

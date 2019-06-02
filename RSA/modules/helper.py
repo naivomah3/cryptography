@@ -143,3 +143,4 @@ def ascii_to_text(block_messages):
     for block in block_messages:
         blocks.append(str(chr(int(block))))
     return blocks
+    
